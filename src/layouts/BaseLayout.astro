@@ -2,23 +2,22 @@
 import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
 
 const { showHeader = true, ...head } = Astro.props;
-
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead {...head} />
-		<ClientRouter />
-	</head>
+<html lang="en" class="antialiased">
+  <head>
+    <BaseHead {...head} />
+    <ClientRouter />
+  </head>
 
-	<body>
-		<Header />
-		<main>
-			<slot />
-		</main>
-		<Footer />
-	</body>
+  <body class="bg-main font-sans">
+    <div class="min-h-screen flex flex-col">
+      <Header />
+      <main class="w-full max-w-3xl mx-auto">
+        <slot />
+      </main>
+    </div>
+  </body>
 </html>

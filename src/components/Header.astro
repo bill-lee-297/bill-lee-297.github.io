@@ -1,15 +1,13 @@
 ---
-import HeaderLink from './HeaderLink.astro';
-import { SITE_TITLE } from '../consts';
+import NavLink from './NavLink.astro';
 ---
 
-<header>
-	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
-		<div>
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/blog">Blog</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
-		</div>
-	</nav>
+<header class="w-full pt-10 pb-12">
+  <nav class="max-w-3xl mx-auto">
+    <ul class="flex items-center gap-6 text-base tracking-widest">
+      <li><NavLink href="/" class:list={'hover:underline hover:underline-offset-2 decoration-1'}>Home</NavLink></li>
+      <li><NavLink href="/blog" class:list={'hover:underline hover:underline-offset-2 decoration-1'}>Projects</NavLink></li>
+      <li><NavLink href="/about" class:list={'hover:underline hover:underline-offset-2 decoration-1'}>Blog</NavLink></li>
+    </ul>
+  </nav>
 </header>
