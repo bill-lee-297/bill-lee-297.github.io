@@ -1,0 +1,11 @@
+---
+import { getEntry } from 'astro:content';
+
+const pathname = Astro.url.pathname;
+const menuName = pathname.split('/').filter(Boolean).pop() || 'Home';
+
+---
+
+<div class="mt-14">
+  <h1 class="text-3xl font-bold capitalize">{menuName}</h1>
+</div>

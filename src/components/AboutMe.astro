@@ -1,41 +1,32 @@
 ---
+import { getEntry, render } from 'astro:content';
+const aboutMeData = await getEntry('info', 'about-me');
 
-const skills = ['HTML/CSS', 'SCSS', 'JavaScript', 'TypeScript', 'React', 'Next.js', 'TailwindCSS', 'Storybook', 'GSAP', 'Astro', 'Node.js', 'MySQL', 'Git'];
-const experiences = [
-  {
-    company: '(주)먼치팩토리',
-    period: '2024.07 - 2024.10',
-    role: '프론트엔드 개발 / 팀원',
-  },
-  {
-    company: '(주)블록오디세이',
-    period: '2019.04 - 2024.03',
-    role: '프론트엔드 개발 / 팀장',
-  },
-  {
-    company: '(주)셀메이트',
-    period: '2018.02 - 2019.04',
-    role: '풀스택 개발 / 팀원',
-  },
-  {
-    company: '위드시스템(주)',
-    period: '2016.09 - 2017.05',
-    role: '풀스택 개발 / 팀원',
-  },
-]
+if (!aboutMeData) {
+  throw new Error('about-me.md 파일을 찾을 수 없습니다.');
+}
 
+const { title, subtitle, skills, experiences, links } = aboutMeData.data;
+
+const { Content } = await render(aboutMeData);
 ---
 
 <div class="mt-14">
-  <div class="text-center">
-    <h1 class="text-3xl font-bold tracking-widest">이국진 Kukjin Lee</h1>
-    <h2 class="text-2xl tracking-widest">Front-end Developer</h2>
+  <div class="text-center hover:text-orange-700">
+    <a href="/">
+      <h1 class="text-3xl font-bold tracking-widest">{title}</h1>
+      <h2 class="text-2xl tracking-widest">{subtitle}</h2>
+    </a>
   </div>
 
-  <div class="mt-16 tracking-wide font-thin">
-    안녕하세요. 프론트엔드 개발자 이국진입니다.<br />
-    저는 코드로 웹에서 동작하는 애니메이션과 인터랙션을 개발하는데 관심이 많습니다.<br />
-    사용자에게 즐거운 경험을 제공하고 몰입감을 높일 수 있는 웹 애플리케이션을 만들고 싶습니다.
+  <div class="mt-16 tracking-wide font-thin text-md text-gray-800">
+    <Content />
+
+    <div class="flex flex-row gap-6 mt-4">
+      {links.map((link) => (
+        <a href={link.link} class="font-light text-md text-orange-700 tracking-wide hover:text-gray-800" target="_blank">{link.title}</a>
+      ))}
+    </div>
   </div>
 
   <div class="mt-16">
