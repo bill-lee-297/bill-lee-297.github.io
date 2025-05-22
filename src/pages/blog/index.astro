@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import List from '../../components/List.astro';
+import MenuTitle from '../../components/MenuTitle.astro';
+
+const blog = await getCollection('blog');
+
+const items = blog.map((blog) => ({
+  id: blog.id,
+  title: blog.data.title,
+  description: blog.data.description,
+  pubDate: blog.data.pubDate.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long', 
+    day: 'numeric'
+  }),
+  url: `/blog/${blog.id}`
+}));
+---
+
+<BaseLayout>
+  <MenuTitle />
+  <List items={items} />
+</BaseLayout> 

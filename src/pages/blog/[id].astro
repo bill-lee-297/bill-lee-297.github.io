@@ -1,0 +1,25 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DetailTitle from '../../components/DetailTitle.astro';
+
+export async function getStaticPaths() {
+  const blog = await getCollection('blog');
+  return blog.map((blog) => ({
+    params: { id: blog.id },
+    props: { blog },
+  }));
+}
+
+const { blog } = Astro.props;
+
+const { Content } = await render(blog);
+
+---
+
+<BaseLayout>
+  <DetailTitle title={blog.data.title} />
+  <div class="prose prose-lg prose-slate pb-20">
+    <Content />
+  </div>
+</BaseLayout>

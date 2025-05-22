@@ -1,0 +1,34 @@
+---
+interface Props {
+  items: {
+    id: string;
+    title: string;
+    description: string;
+    pubDate: string;
+    url: string;
+  }[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="py-18 flex flex-col gap-12">
+  {
+    items.map((item) => (
+      <article class="group">
+        <a href={item.url} class="block">
+          <p class="text-gray-600 text-sm leading-normal">
+            {item.pubDate}
+          </p>
+          <h2 class="text-gray-800 text-2xl mb-2 group-hover:text-orange-700">
+            {item.title}
+          </h2>
+
+          <p class="text-gray-600 text-md leading-relaxed group-hover:underline underline-offset-1 decoration-1">
+            {item.description}
+          </p>
+        </a>
+      </article>
+    ))
+  }
+</div>
