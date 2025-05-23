@@ -21,3 +21,47 @@ GSAP 라이브러리를 살펴보는 중에 Easing에서 bounce.out의 그래프
   on <a href="https://codepen.io">CodePen</a>.</span>
 </p>
 <script async src="https://public.codepenassets.com/embed/index.js"></script>
+
+
+
+먼저 사용자가 입력한 숫자만큼 반복문을 돌려서 볼을 생성했다.
+색상과 위치를 랜덤으로 주었고 하늘에서 떨어져야하기 때문에 공의 크기인 40px에서 그림자 값 2px을 더해 -top:42px로 영역에서는 보이지 않는 위치에 배치했다.
+
+```javascript
+function createBall() {
+  const ballElement = document.createElement('div');
+  const color = getRandomColor();
+
+  ballElement.classList.add('ball');
+  ballElement.style.top = -42 + 'px';
+  ballElement.style.left = `${Math.random() * innerWidth}px`;
+  ballElement.style.backgroundColor = color;
+  ballElement.style.boxShadow = `0 1px 2px ${color}`;
+
+  document.querySelector('.container').appendChild(ballElement);
+  return ballElement;
+}
+```
+
+모든 공이 동일하게 떨어질 필요는 없기 때문에 생성과 동시에 떨어트렸다.
+공이 떨어지는 순서도 랜덤으로 해야하기 때문에 delay 시간도 랜덤으로 지정했다.
+공의 높이가 40px이고 초기 배치는 -50px로 배치 했기 때문에 최종 도착지는 window.innerHeight+10으로 지정했다.
+
+```javascript
+function dropBall(ballElement) {
+  const delay = Math.random() * 3;
+
+  gsap.to(ballElement, {
+    y: window.innerHeight+2,
+    duration: 2,
+    ease: 'bounce.out',
+    delay: delay
+  });
+}
+```
+
+공이 떨어지는 것 같은 애니메이션을 라이브러리 없이 직접 만들려면 많은 시간이 들었을 것이다.
+애니메이션을 구현하는데 있어서 GSAP이 강력하다는 것을 다시 한번 깨달았다.   
+
+다음에는 공과 공이 물리법칙으로 상호작용하는 기능도 넣고 싶다. 
+지금은 공과 공이 겹쳐서 동작하고 있다. 서로 부딪쳐서 튕겨지고 바닥에 쌓이는 동작을 구현해보고 싶다.
