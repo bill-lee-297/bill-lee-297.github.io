@@ -46,4 +46,4 @@ module.exports = {
 
 
 
-<img src="/blog/post-3/1.png" alt="cdn path image" width="70%">
+<img src="/blog/post-3/1.png" alt="cdn path image" width="100%">
