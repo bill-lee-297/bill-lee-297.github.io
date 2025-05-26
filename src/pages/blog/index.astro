@@ -15,11 +15,14 @@ const items = blog.map((blog) => ({
     month: 'long', 
     day: 'numeric'
   }),
+  date: blog.data.pubDate,
   url: `/blog/${blog.id}`
 }));
+
+const sortedItems = items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 ---
 
 <BaseLayout>
   <MenuTitle />
-  <List items={items} />
+  <List items={sortedItems} />
 </BaseLayout> 
