@@ -1,67 +1,103 @@
 ---
-title: 'Drop The Ball - GSAP Animation bounce'
-description: 'GSAP 라이브러리의 애니메이션 기능을 활용하여 공이 하늘에서 떨어지는 모습을 구현해보았다.'
-pubDate: '2024.05.22'
+title: 'Github Action을 활용하여 도커에 환경변수를 주입하는 방법'
+description: 'Next.js를 AWS의 ECR에 이미지로 생성할 때 Github Action을 활용하여 도커에 환경변수를 주입하는 방법'
+pubDate: '2023.03.27'
 ---
 
-GSAP 라이브러리를 살펴보는 중에 Easing에서 bounce.out의 그래프를 보게 되었다.
-공이 튕기는 것과 동일하게 애니메이션의 동작 그래프가 그려졌다.
+Next.js를 사용하면서 정적페이지로 배포하는 것이 아니기 때문에 서버에 배포하는 과정에서 도커를 사용하기로 하였고 코드를 dev, stage, main에 병합이 되는 순간 AWS의 ECR에 이미지가 생성이 되도록 하였다.
 
-<img src="/blog/post-1-bounce.gif" alt="bounce animation" width="50%">
+ 
 
-공이 튕기는 것과 관련된 재밌는 것을 만들어 보고 싶었다. 예전에 봤던 하늘에서 눈이 내리는 애니메이션에서 아이디어를 얻어서
-하늘에서 공이 떨어지는 것을 만들어보기로 했다.
+그 과정에서 환경변수(.env)를 어떻게 관리 해야되나 고민했다. Repo에 민감한 정보가 있는 .env를 올리는 것도 아닌거 같고 서버 안에서 .env 생성하여 컨테이너가 그 환경변수를 바라보게 하는 것도 뭔가 좋아보이지 않았다.
 
-첫번째로 공의 개수를 사용자에게 입력을 받도록 했다.   
-두번째로 공의 위치와 색, 떨어지는 시간을 랜덤하게 했다.
+ 
 
-<p class="codepen" data-height="500" data-default-tab="result" data-slug-hash="yyymxXg" data-pen-title="[GSAP]DropTheBall" data-user="kukjin-lee" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
-  <span>See the Pen <a href="https://codepen.io/kukjin-lee/pen/yyymxXg">
-  [GSAP]DropTheBall</a> by kukjin (<a href="https://codepen.io/kukjin-lee">@kukjin-lee</a>)
-  on <a href="https://codepen.io">CodePen</a>.</span>
-</p>
-<script async src="https://public.codepenassets.com/embed/index.js"></script>
+그래서 생각한 방법이 Github Action에서 도커 이미지를 생성할 때 옵션 값으로 환경변수(.env)를 넣기로 하였고 방법을 찾아봤다.
+
+ 
+
+맞는 방법인지는 모르겠지만 CI/CD를 하는 방법을 아래와 같은 흐름으로 진행하기로 했다.
+
+<img src="/blog/post-1/1.png" alt="CI/CD process flow" width="100%">
+
+먼저 Github Action에서 Secrets를 설정하는 방법을 살펴보면 Settings -> Security -> Secrets and variables -> Actions에서 만들 수 있다.
+
+<img src="/blog/post-1/2.png" alt="github setting page" width="100%">
+
+브랜치별로 환경변수를 다르게 할 필요가 없다면 Repository secrets에 환경변수를 등록하면 되지만, main, stage, dev의 환경변수를 다 다르게 설정을 해줘야했다. 그래서 Environment secrets을 활용하기로 했다.
+
+ 
+환경에 대한 이름을 지어주고 
+<img src="/blog/post-1/3.png" alt="github setting page environment" width="100%">
 
 
+아래와 같이 Selected branches를 해서 원하는 브랜치 명을 입력해줬다.
 
-먼저 사용자가 입력한 숫자만큼 반복문을 돌려서 볼을 생성했다.
-색상과 위치를 랜덤으로 주었고 하늘에서 떨어져야하기 때문에 공의 크기인 40px에서 그림자 값 2px을 더해 -top:42px로 영역에서는 보이지 않는 위치에 배치했다.
+<img src="/blog/post-1/4.png" alt="github setting page environment" width="100%">
 
-```javascript
-function createBall() {
-  const ballElement = document.createElement('div');
-  const color = getRandomColor();
+아래에서 Add secret을 입력해줬다. 
 
-  ballElement.classList.add('ball');
-  ballElement.style.top = -42 + 'px';
-  ballElement.style.left = `${Math.random() * innerWidth}px`;
-  ballElement.style.backgroundColor = color;
-  ballElement.style.boxShadow = `0 1px 2px ${color}`;
+<img src="/blog/post-1/5.png" alt="github setting page environment" width="100%">
 
-  document.querySelector('.container').appendChild(ballElement);
-  return ballElement;
-}
+이런 방식으로 dev, stage, main에 환경변수명과 값을 넣어주면 된다. 이제 이 secrets 값을 github action 스크립트 파일(yml)에서 도커로 주입을 해줘야한다. 환경별로 다른 secrets을 넣기 위해서는 어떤 환경인지 선언을 해줘야한다.
+
+```yml
+jobs:
+    build:
+        environment: dev // main 혹은 stage
 ```
 
-모든 공이 동일하게 떨어질 필요는 없기 때문에 생성과 동시에 떨어트렸다.
-공이 떨어지는 순서도 랜덤으로 해야하기 때문에 delay 시간도 랜덤으로 지정했다.
-공의 높이가 40px이고 초기 배치는 -50px로 배치 했기 때문에 최종 도착지는 window.innerHeight+10으로 지정했다.
 
-```javascript
-function dropBall(ballElement) {
-  const delay = Math.random() * 3;
-
-  gsap.to(ballElement, {
-    y: window.innerHeight+2,
-    duration: 2,
-    ease: 'bounce.out',
-    delay: delay
-  });
-}
+```yml
+run: |
+  docker build \
+  --build-arg "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL}}" \
+  --build-arg "NEXT_PUBLIC_API_KEY=${{ secrets.NEXT_PUBLIC_API_KEY}}" \
+  --build-arg "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID}}" \
+  --build-arg "KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY}}" \
+  --build-arg "NEXT_PUBLIC_TOSS_CLIENTKEY=${{ secrets.NEXT_PUBLIC_TOSS_CLIENTKEY}}" \
+  --build-arg "NEXT_PUBLIC_ORIGIN_URL=${{ secrets.NEXT_PUBLIC_ORIGIN_URL}}" \
+  --build-arg "NEXT_PUBLIC_TEST_API_URL=${{ secrets.NEXT_PUBLIC_TEST_API_URL}}" \
+  -t $ECR_REPOSITORY:$IMAGE_TAG .
 ```
 
-공이 떨어지는 것 같은 애니메이션을 라이브러리 없이 직접 만들려면 많은 시간이 들었을 것이다.
-애니메이션을 구현하는데 있어서 GSAP이 강력하다는 것을 다시 한번 깨달았다.   
 
-다음에는 공과 공이 물리법칙으로 상호작용하는 기능도 넣고 싶다. 
-지금은 공과 공이 겹쳐서 동작하고 있다. 서로 부딪쳐서 튕겨지고 바닥에 쌓이는 동작을 구현해보고 싶다.
+Dockerfile을 통해서 빌드명령어를 실행 시킬 때 --build-arg에 다음과 같이 secrets을 넣어준다. 앞에서 environment: dev 로 설정해줬기 때문에 github에서 dev 환경에 해당하는 secrets 값이 들어가게 된다.
+
+ 
+
+이제 Dockerfile이 실행되고 --build-arg로 넘겨줬던 변수를 받아서 env로 넣는 과정이 필요하다. DockerFile 안에 다음과 같이 넣었다.
+
+```yml
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_API_KEY
+ARG NAVER_CLIENT_ID
+ARG KAKAO_REST_API_KEY
+ARG NEXT_PUBLIC_TOSS_CLIENTKEY
+ARG NEXT_PUBLIC_ORIGIN_URL
+ARG NEXT_PUBLIC_TEST_API_URL
+
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY}
+ENV NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+ENV KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
+ENV NEXT_PUBLIC_TOSS_CLIENTKEY=${NEXT_PUBLIC_TOSS_CLIENTKEY}
+ENV NEXT_PUBLIC_ORIGIN_URL=${NEXT_PUBLIC_ORIGIN_URL}
+ENV NEXT_PUBLIC_TEST_API_URL=${NEXT_PUBLIC_TEST_API_URL}
+```
+
+
+코드가 자동으로 병합 됐을 때 다음과 같이 실행되는걸 볼 수 있다.
+
+
+<img src="/blog/post-1/6.png" alt="github setting page environment" width="100%">
+
+
+```yml
+jobs:
+    build:
+        environment: dev
+```
+
+이 부분만 빠르게 찾았다면 쉽게 했을 작업인데 한참 걸렸다. 이런 방법으로 도커를 배포하는게 좋은 방법인지는 더 찾아봐야되지만 Github Action에서 브랜치별로 secrets를 주입하는 기능에 대해서 이해하고 활용했다는 점에서 경험치를 쌓았다고 생각한다.
+
