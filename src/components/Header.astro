@@ -1,12 +1,33 @@
 ---
 import NavLink from './NavLink.astro';
+import { getEntry } from 'astro:content';
+import externalLinkIcon from '../assets/external-link.svg?raw';
+
+const aboutMeData = await getEntry('info', 'about-me');
+
+if (!aboutMeData) {
+  throw new Error('about-me.md 파일을 찾을 수 없습니다.');
+}
+
 ---
 
 <header class="w-full pt-10 pb-12">
   <nav class="max-w-3xl mx-auto">
     <ul class="flex items-center gap-6 text-base tracking-widest">
-      <li><NavLink href="/" class:list={'hover:underline hover:underline-offset-2 decoration-1'}>Home</NavLink></li>
-      <li><NavLink href="/blog" class:list={'hover:underline hover:underline-offset-2 decoration-1'}>Blog</NavLink></li>
+      <li>
+        <NavLink href="/" class:list={'hover:underline hover:underline-offset-2 decoration-1'}>Home</NavLink>
+      </li>
+      <li>
+        <NavLink href="/blog" class:list={'hover:underline hover:underline-offset-2 decoration-1'}>Blog</NavLink>
+      </li>
+      {aboutMeData.data.links.map((item) => (
+        <li>
+          <NavLink href={item.link} class:list={'hover:underline hover:underline-offset-2 decoration-1 flex items-center gap-1'} target="_blank">
+            {item.title}
+            <Fragment set:html={externalLinkIcon} />
+          </NavLink>
+        </li>
+      ))}
     </ul>
   </nav>
 </header>

@@ -1,5 +1,7 @@
 ---
 import { getEntry, render } from 'astro:content';
+import SubContainer from './SubContainer.astro';
+
 const aboutMeData = await getEntry('info', 'about-me');
 
 if (!aboutMeData) {
@@ -12,36 +14,24 @@ const { Content } = await render(aboutMeData);
 ---
 
 <div class="mt-14">
-  <div class="text-center hover:text-orange-700">
-    <a href="/">
-      <h1 class="text-3xl font-bold tracking-widest">{title}</h1>
-      <h2 class="text-2xl tracking-widest">{subtitle}</h2>
-    </a>
+  <div class="text-left group cursor-grab">
+    <h1 class="text-3xl font-bold tracking-widest group-hover:text-orange-700 group-hover:[text-shadow:2px_2px_theme(colors.blue.300)] text">{title}</h1>
+    <h2 class="text-2xl tracking-widest group-hover:text-orange-700 group-hover:[text-shadow:2px_2px_theme(colors.blue.300)]">{subtitle}</h2>
   </div>
 
-  <div class="mt-16 tracking-wide font-thin text-md text-gray-800">
+  <div class="mt-10 tracking-wide font-thin text-md text-gray-800">
     <Content />
-
-    <div class="flex flex-row gap-6 mt-4">
-      {links.map((link) => (
-        <a href={link.link} class="font-light text-md text-orange-700 tracking-wide hover:text-gray-800" target="_blank">{link.title}</a>
-      ))}
-    </div>
   </div>
 
-  <div class="mt-16">
-    <h2 class="text-xl font-bold mb-2">Skills</h2>
-
+  <SubContainer title="Skills">
     <div class="flex flex-wrap gap-2">
-      {skills.map((skill) => (
-        <div class="bg-lime-800 text-gray-100 px-2 py-1 rounded-md">{skill}</div>
+      {skills.map(skill => (
+        <div class="text-gray-800 px-2 py-1 rounded-md cursor-default border border-gray-400">{skill}</div>
       ))}
     </div>
-  </div>
+  </SubContainer>
 
-  <div class="mt-16">
-    <h2 class="text-xl font-bold mb-2">Experience</h2>
-
+  <SubContainer title="Experience">
     <div class="flex flex-col gap-4">
       {experiences.map((experience) => (
         <div class="flex flex-col gap-0.5">
@@ -53,5 +43,5 @@ const { Content } = await render(aboutMeData);
         </div>
       ))}
     </div>
-  </div>
+  </SubContainer>
 </div>

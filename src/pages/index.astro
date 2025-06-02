@@ -1,8 +1,53 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AboutMe from '../components/AboutMe.astro';
+import SubContainer from '../components/SubContainer.astro';
+import { getCollection } from 'astro:content';
+
+const blog = await getCollection('blog');
+
+const items = blog.map((blog) => ({
+  id: blog.id,
+  title: blog.data.title,
+  description: blog.data.description,
+  pubDate: blog.data.pubDate.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long', 
+    day: 'numeric'
+  }),
+  date: blog.data.pubDate,
+  url: `/blog/${blog.id}`
+}));
+
+const sortedItems = items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 3);
 ---
 
 <BaseLayout>
   <AboutMe />
+
+  <SubContainer title="Blog">
+    <div class="flex flex-col gap-8">
+      {sortedItems.map((item) => (
+        <article class="group">
+          <a href={item.url} class="block">
+            <p class="text-gray-600 text-xs leading-normal">
+              {item.pubDate}
+            </p>
+            <h2 class="text-gray-800 text-lg mb-1 group-hover:text-orange-700">
+              {item.title}
+            </h2>
+
+            <p class="text-gray-600 text-sm leading-relaxed group-hover:underline underline-offset-1 decoration-1">
+              {item.description}
+            </p>
+          </a>
+        </article>
+      ))}
+      <div class="flex group">
+        <a href="/blog" class="pr-4 py-2 text-sm text-gray-800 group-hover:text-orange-700 underline underline-offset-6 decoration-0.5">
+          블로그 전체보기 <span class="text-gray-800 group-hover:text-orange-700">→</span>
+        </a>
+      </div>
+    </div>
+  </SubContainer>
 </BaseLayout>

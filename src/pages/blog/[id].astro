@@ -26,12 +26,20 @@ const pubDate = new Date(blog.data.pubDate).toLocaleDateString('ko-KR', {
 <BaseLayout>
   <span>{pubDate}</span>
   <DetailTitle title={blog.data.title} />
-  <div class="prose prose-lg prose-slate pb-20 [&_img]:cursor-pointer [&_img]:transition-transform [&_img:hover]:scale-102">
+  <div class="prose prose-lg prose-slate max-w-none pb-20 [&_img]:cursor-pointer [&_img]:transition-transform [&_img:hover]:scale-102">
     <Content />
   </div>
 
   <div id="light-box" class="fixed inset-0 bg-black bg-opacity-90 hidden flex items-center justify-center z-50">
     <img id="light-box-img" src="" alt="" class="max-h-[90vh] max-w-[90vw] object-contain">
+  </div>
+
+  <div class="flex justify-start">
+    <div class="group">
+      <a href="/blog" class="py-2 text-md text-gray-800 group-hover:text-orange-700 underline underline-offset-6 decoration-1">
+        <span class="text-gray-800 group-hover:text-orange-700">←</span> 목록으로 돌아가기
+      </a>
+    </div>
   </div>
 </BaseLayout>
 
