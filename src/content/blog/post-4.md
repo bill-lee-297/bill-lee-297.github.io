@@ -8,7 +8,7 @@ pubDate: '2025.05.28'
 언제든지 밤하늘에서 떨어지는 별똥별을 보며 소원을 빌 수 있는 서비스를 만들어 봤다.그리고 그 과정에서 별똥별의 모습을 어떻게 구현했는지 기록해볼까 한다.
 
 <div style="text-align: center;">
-  <video width="100%" autoplay muted loop>
+  <video width="100%" autoplay muted loop controls>
     <source src="/blog/post-4/shootingStar.mp4" type="video/mp4">
     브라우저가 비디오 태그를 지원하지 않습니다.
   </video>
